@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT;
 
 for(const route of routes) {
-  app.post(route.url, (req: Request, res: Response) => {
+  app[route.method](route.url, (req: Request, res: Response) => {
     route.exec(req, res);
   });
 }
