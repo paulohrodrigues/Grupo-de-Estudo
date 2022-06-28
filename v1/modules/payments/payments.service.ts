@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import dotenv from 'dotenv';
 import validator from 'validator';
-import { ConstructorInterface, PaymentRequestInterface, Picpay } from 'picpay-sdk';
+import { ConstructorInterface, PaymentRequestInterface, PaymentResponseInterface, Picpay } from 'picpay-sdk';
+import { Payments } from "./payments.entity";
 
 dotenv.config();
 
@@ -10,12 +11,9 @@ const constructorInterface: ConstructorInterface = {
   sellerToken: String(process.env.SELLER_TOKEN)
 } 
 
-console.log(constructorInterface)
-console.log(process.env.PORT)
-
 const picpay = new Picpay(constructorInterface)
 
-export class Payment {
+export class PaymentService {
    public static async buyCrypto(req: Request, res: Response): Promise<void> {
 
     const {
@@ -53,9 +51,30 @@ export class Payment {
       callbackUrl: 'https://callback',
     };
 
-    await picpay.payment.request(requestParams).then((data)=>{ console.log(data) }).catch((err)=>{ console.log(err) });
+    let responsePicpay: PaymentResponseInterface;
 
-    res.status(201).send('Send with successful ');
+    try {
+      responsePicpay = await  picpay.payment.request(requestParams);
+
+      await Payments.create({
+        fiatAmount, 
+        address,
+        firstName, 
+        lastName,
+        document,
+        email,
+        phone,
+        state: 'pending',
+        urlPayment: responsePicpay.paymentUrl,
+      });
+
+    } catch(error) {
+      res.status(400).json({ error: 'Create payment error...'});
+
+      return;
+    }
+
+    res.status(201).json({ paymentUrl: responsePicpay.paymentUrl });
   }
 }
 
