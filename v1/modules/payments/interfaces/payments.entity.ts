@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { Connect } from "../../database/connect";
+import { Connect } from "../../../database/connect";
 
 const Payments = Connect.getIntance().define('Payment', {
   id: {
@@ -17,6 +17,7 @@ const Payments = Connect.getIntance().define('Payment', {
   phone: { type:  DataTypes.STRING },
   state: { type:  DataTypes.STRING },
   urlPayment: { type:  DataTypes.STRING },
+  reference: { type:  DataTypes.STRING },
 });
 
 export { Payments };

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import dotenv from 'dotenv';
 import validator from 'validator';
 import { ConstructorInterface, PaymentRequestInterface, PaymentResponseInterface, Picpay } from 'picpay-sdk';
-import { Payments } from "./payments.entity";
+import { Payments } from '../interfaces/payments.entity';
 
 dotenv.config();
 
@@ -38,6 +38,8 @@ export class PaymentService {
       res.status(400).send('Fiat amount is not valid');
     }
 
+    const reference = (new Date()).getTime().toString();
+
     const requestParams: PaymentRequestInterface = {
       buyer: {
           document,
@@ -47,8 +49,8 @@ export class PaymentService {
           phone,
       },
       value: fiatAmount,
-      referenceId: (new Date()).getTime().toString() ,
-      callbackUrl: 'https://callback',
+      referenceId: reference,
+      callbackUrl: 'https://URL/confirm/payment',
     };
 
     let responsePicpay: PaymentResponseInterface;
@@ -66,6 +68,7 @@ export class PaymentService {
         phone,
         state: 'pending',
         urlPayment: responsePicpay.paymentUrl,
+        reference,
       });
 
     } catch(error) {
