@@ -8,7 +8,7 @@ const Payments = Connect.getIntance().define('Payment', {
     allowNull: false,
     primaryKey: true
   },
-  fiatAmount: { type: DataTypes.NUMBER }, 
+  fiatAmount: { type: DataTypes.NUMBER },
   address: { type:  DataTypes.STRING },
   firstName: { type:  DataTypes.STRING }, 
   lastName: { type:  DataTypes.STRING },
