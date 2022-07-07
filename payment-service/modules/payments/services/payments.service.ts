@@ -50,7 +50,7 @@ export class PaymentService {
       },
       value: fiatAmount,
       referenceId: reference,
-      callbackUrl: 'https://URL/confirm/payment',
+      callbackUrl: 'https://247a-45-237-93-44.sa.ngrok.io/confirm/payment',
     };
 
     let responsePicpay: PaymentResponseInterface;

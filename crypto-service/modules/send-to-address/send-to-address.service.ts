@@ -1,15 +1,25 @@
+const CryptoAccount = require('send-crypto');
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const privateKey = process.env.PRIVATE_KEY;
+
+const account = new CryptoAccount(privateKey, { network: "ropsten" });
+
 export class SendToAddress {
   public execute(data: string) {
     const { amount, address } = JSON.parse(data);
 
-    return new Promise((resolve) => {
-      // send crypt to client
+    return new Promise(async (resolve) => {
+      const txHash = await account
+        .send(address, amount, "ETH")
+        .on("transactionHash", console.log)
+        .on("confirmation", console.log);
 
-      console.log('amount ', amount);
+      console.log(txHash);
 
-      console.log('address ', address);
-      
-      resolve(true);
+      resolve(txHash);
     });
   }
 }
