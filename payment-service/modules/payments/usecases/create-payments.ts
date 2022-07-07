@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
 import dotenv from 'dotenv';
 import validator from 'validator';
 import { ConstructorInterface, PaymentRequestInterface, PaymentResponseInterface, Picpay } from 'picpay-sdk';
 import { Payments } from '../interfaces/payments.entity';
+import { ICreatePaymentInputDTO } from "../interfaces/create-payment-input.dto";
+import { ICreatePaymentResponseDTO } from "../interfaces/create-payment-response.dto";
 
 dotenv.config();
 
@@ -13,9 +14,10 @@ const constructorInterface: ConstructorInterface = {
 
 const picpay = new Picpay(constructorInterface)
 
-export class PaymentService {
-   public static async buyCrypto(req: Request, res: Response): Promise<void> {
-
+export class CreatePayment {
+   public async execute(
+    paymentInput: ICreatePaymentInputDTO,
+  ): Promise<ICreatePaymentResponseDTO> {
     const {
       fiatAmount, 
       address,
@@ -24,18 +26,18 @@ export class PaymentService {
       document,
       email,
       phone,
-    } = req.body;
+    } = paymentInput;
 
     if(!validator.isEmail(email)){
-      res.status(400).send('E-mail is not valid');
+      throw ('E-mail is not valid');
     }
 
-    if(!validator.isTaxID(document, 'pt-BR')){
-      res.status(400).send('Document is not valid');
+    if(!validator.isTaxID(document, 'pt-BR')) {
+      throw ('Document is not valid');
     }
 
-    if(!validator.isNumeric(fiatAmount)){
-      res.status(400).send('Fiat amount is not valid');
+    if(!validator.isNumeric(String(fiatAmount))) {
+      throw ('Fiat amount is not valid');
     }
 
     const reference = (new Date()).getTime().toString();
@@ -72,12 +74,10 @@ export class PaymentService {
       });
 
     } catch(error) {
-      res.status(400).json({ error: 'Create payment error...'});
-
-      return;
+      throw ('Create payment error...');
     }
 
-    res.status(201).json({ paymentUrl: responsePicpay.paymentUrl });
+    return { paymentUrl: responsePicpay.paymentUrl };
   }
 }
 
