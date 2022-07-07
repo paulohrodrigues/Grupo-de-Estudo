@@ -104,6 +104,4 @@ dist
 .tern-port
 
 #sqlite
-/v1/database/database.sqlite
-
 *.sqlite
