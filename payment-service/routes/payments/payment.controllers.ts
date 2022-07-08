@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { ICreatePaymentInputDTO } from "./modules/payments/interfaces/create-payment-input.dto";
-import { ConfirmPayment } from "./modules/payments/usecases/confirm-payment";
-import { CreatePayment } from "./modules/payments/usecases/create-payments";
+import { ICreatePaymentInputDTO } from "./dtos/create-payment-input.dto";
+import { CreatePayment } from "../../@core/application/payments/create-payments.usecases";
 
 type Method = 'post' | 'get' | 'delete' | 'put';
 
@@ -32,7 +31,7 @@ export const routes: Array<{url: string, exec: any, method: Method }> = [
   },
   {
     method: 'post',
-    exec: (new ConfirmPayment()).execute,
+    exec: null, //TODO create controller
     url: '/confirm/payment'
   },
 ];

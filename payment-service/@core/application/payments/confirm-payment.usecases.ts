@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
-import { RabbitMQService } from "../../amqp/rabbit-mq";
-import { Payments } from "../interfaces/payments.entity";
+import { RabbitMQService } from "../../infra/amqp/rabbit-mq";
 import dotenv from 'dotenv';
+import { PaymentRepositoryInterface } from "../../domain/payments/repositories/payment.repository";
 dotenv.config();
 
 const AMQP = new RabbitMQService(String(process.env.AMQP));
 
 export class ConfirmPayment {
+  constructor(private paymentRepo: PaymentRepositoryInterface) {}
+
   public async execute(req: Request, res: Response): Promise<void> {
     const { referenceId } = req.body;
 
-    const payment = (await Payments.findOne({ where: { reference: referenceId } }))?.toJSON();
+    const payment = await this.paymentRepo.findByReferenceId(referenceId);
 
     if(!payment) {
       console.log('Pagamento Não encontrado');
@@ -27,10 +29,9 @@ export class ConfirmPayment {
 
       return;
     }
-
     //Check if payment confirmed with successful
 
-    await Payments.update({ state: 'confirmed' }, {where: { reference: referenceId }} );
+    await this.paymentRepo.updateByReferenceId(referenceId, { state: 'confirmed' });
 
     await AMQP.sendQueue('trade', {
       action: 'trade',

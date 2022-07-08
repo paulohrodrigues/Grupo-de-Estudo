@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { Connect } from "../../../database/connect";
+import { Connect } from "../connect";
 
 const Payments = Connect.getIntance().define('Payment', {
   id: {

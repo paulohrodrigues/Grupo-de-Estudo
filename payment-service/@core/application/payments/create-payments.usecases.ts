@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 import validator from 'validator';
 import { ConstructorInterface, PaymentRequestInterface, PaymentResponseInterface, Picpay } from 'picpay-sdk';
-import { Payments } from '../interfaces/payments.entity';
-import { ICreatePaymentInputDTO } from "../interfaces/create-payment-input.dto";
-import { ICreatePaymentResponseDTO } from "../interfaces/create-payment-response.dto";
+import { Payments } from '../../infra/db/sequilize/payments/payments.schema';
+import { ICreatePaymentInputDTO } from "../../../routes/payments/dtos/create-payment-input.dto";
+import { ICreatePaymentResponseDTO } from "../../../routes/payments/dtos/create-payment-response.dto";
 
 dotenv.config();
 
