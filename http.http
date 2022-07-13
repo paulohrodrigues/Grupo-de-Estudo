@@ -1,0 +1,12 @@
+POST http://localhost:3002/buy/crypto HTTP/1.1
+content-type: application/json
+
+{
+    "fiatAmount": "0.01",
+    "address":"0x",
+    "firstName": "Jose",
+    "lastName": "Henrique",
+    "document": "1....",
+    "email": "exemple@email.com",
+    "phone": "+55 81 90000-0000"
+}

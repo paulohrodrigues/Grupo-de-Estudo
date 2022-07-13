@@ -1,6 +1,5 @@
 export class Payment {
   constructor(
-    public id: number,
     public fiatAmount: number,
     public address: string,
     public firstName: string,
@@ -11,6 +10,7 @@ export class Payment {
     public state: string,
     public urlPayment: string,
     public reference: string,
+    public id?: number,
   ) {}
 
   get getId() {

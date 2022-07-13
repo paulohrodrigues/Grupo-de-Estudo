@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 import validator from 'validator';
 import { ConstructorInterface, PaymentRequestInterface, PaymentResponseInterface, Picpay } from 'picpay-sdk';
-import { Payments } from '../../infra/db/sequilize/payments/payments.schema';
-import { ICreatePaymentInputDTO } from "../../../routes/payments/dtos/create-payment-input.dto";
-import { ICreatePaymentResponseDTO } from "../../../routes/payments/dtos/create-payment-response.dto";
+import { PaymentRepositoryInterface } from '../../domain/payments/repositories/payment.repository';
+import { Payment } from '../../domain/payments/entities/payment.entity';
+import { ICreatePaymentInputDTO } from '../../infra/express/routes/payments/dtos/create-payment-input.dto';
+import { ICreatePaymentResponseDTO } from '../../infra/express/routes/payments/dtos/create-payment-response.dto';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ const constructorInterface: ConstructorInterface = {
 const picpay = new Picpay(constructorInterface)
 
 export class CreatePayment {
+  constructor(private paymentRepo: PaymentRepositoryInterface) {}
+
    public async execute(
     paymentInput: ICreatePaymentInputDTO,
   ): Promise<ICreatePaymentResponseDTO> {
@@ -52,7 +55,7 @@ export class CreatePayment {
       },
       value: fiatAmount,
       referenceId: reference,
-      callbackUrl: 'https://247a-45-237-93-44.sa.ngrok.io/confirm/payment',
+      callbackUrl: String(process.env.WEBHOOK_PICPAY),
     };
 
     let responsePicpay: PaymentResponseInterface;
@@ -60,18 +63,20 @@ export class CreatePayment {
     try {
       responsePicpay = await  picpay.payment.request(requestParams);
 
-      await Payments.create({
-        fiatAmount, 
+      const payment = new Payment(
+        fiatAmount,
         address,
-        firstName, 
+        firstName,
         lastName,
         document,
         email,
         phone,
-        state: 'pending',
-        urlPayment: responsePicpay.paymentUrl,
+        'pending',
+        responsePicpay.paymentUrl,
         reference,
-      });
+      );
+
+      await this.paymentRepo.create(payment);
 
     } catch(error) {
       throw ('Create payment error...');
