@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import * as dotenv from 'dotenv';
 import { routes } from './routes/payments/payment.controllers';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 

@@ -1,5 +1,5 @@
 import { RabbitMQService } from "./modules/amqp/rabbit-mq";
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import { SendToAddress } from "./modules/send-to-address/send-to-address.service";
 
 dotenv.config();
